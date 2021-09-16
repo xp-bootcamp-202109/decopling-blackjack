@@ -1,17 +1,33 @@
 package io.xp.kata.blackjack;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 
 public class GameTest {
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
+    @InjectMocks
     Game game = new Game();
+
+    @Mock
+    Deck deck;
 
     @Test
     public void start_game_should_fapai() {
+        givenCards("A7", "B7", "C7");
+
         GameResult gameDto = game.startGame();
 
         assertEquals(asList("B7"), gameDto.getHost().getCards());
@@ -20,6 +36,8 @@ public class GameTest {
 
     @Test
     public void close_deal_should_return_game_result() {
+        givenCards("A7", "B7", "C7", "BA");
+
         game.startGame();
 
         GameResult result = game.closeDeal();
@@ -32,6 +50,8 @@ public class GameTest {
 
     @Test
     public void host_should_deal_until_17() {
+        givenCards("A7", "B7", "C7", "B2","B3","B4","B5","B6");
+
         game.startGame();
         GameResult result = game.closeDeal();
 
@@ -41,6 +61,8 @@ public class GameTest {
 
     @Test
     public void host_should_lose_with_bust() {
+        givenCards("AA", "B7", "CA", "B9","BA","B4","B5","B6");
+
         game.startGame();
         GameResult result = game.closeDeal();
 
@@ -50,6 +72,8 @@ public class GameTest {
 
     @Test
     public void player_should_lose_with_bust() {
+        givenCards("AA", "B7", "CA", "B2","B3","B4","B5","B6");
+
         game.startGame();
         GameResult result = game.deal();
 
@@ -57,4 +81,7 @@ public class GameTest {
         assertTrue(result.getHost().isWinner());
     }
 
+    private void givenCards(String first, String... others) {
+        when(deck.deal()).thenReturn(first, others);
+    }
 }
