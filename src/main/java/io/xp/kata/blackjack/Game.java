@@ -29,6 +29,7 @@ public class Game {
         boolean isHostWin = gameRule.isHostWin(host.getCards(), player.getCards());
 
         return generateGameResult(isHostWin, !isHostWin);
+
     }
 
     public GameResult deal() {

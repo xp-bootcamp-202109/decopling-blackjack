@@ -33,7 +33,6 @@ public class GameTest {
 
         assertEquals(asList("B7"), gameDto.getHost().getCards());
         assertEquals(asList("A7","C7"), gameDto.getPlayer().getCards());
-
     }
 
     @Test
@@ -81,7 +80,6 @@ public class GameTest {
 
         assertEquals(asList("AA","CA", "B2"), result.getPlayer().getCards());
         assertTrue(result.getHost().isWinner());
-
     }
 
     private void givenCards(String first, String... others) {
