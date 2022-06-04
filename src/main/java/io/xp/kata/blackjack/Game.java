@@ -1,9 +1,8 @@
 package io.xp.kata.blackjack;
 
-import java.sql.*;
-
 public class Game {
 
+    public static final int HOST_DEAL_THRESHOLD = 17;
     private Deck deck = new Deck();
     private GameRule gameRule = new GameRule();
 
@@ -24,19 +23,13 @@ public class Game {
     }
 
     public GameResult closeDeal() {
-        try (Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5740/blackjack");
-             Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("select * from configuration where key = 'game_rule'");
-            rs.next();
-            int hostMinimumPoint = Integer.parseInt(rs.getString("host_deal_limit"));
-            while (gameRule.sum(host.getCards()) < hostMinimumPoint) {
-                host.add(deck.deal());
-            }
-            boolean isHostWin = gameRule.isHostWin(host.getCards(), player.getCards());
-            return generateGameResult(isHostWin, !isHostWin);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        while (gameRule.sum(host.getCards()) < HOST_DEAL_THRESHOLD) {
+            host.add(deck.deal());
         }
+        boolean isHostWin = gameRule.isHostWin(host.getCards(), player.getCards());
+
+        return generateGameResult(isHostWin, !isHostWin);
+
     }
 
     public GameResult deal() {
@@ -60,4 +53,5 @@ public class Game {
         gameResult.setPlayer(playerDto);
         return gameResult;
     }
+
 }
